@@ -116,37 +116,42 @@ func AddServer(s *Server) {
 }
 
 // generateConfig 生成配置文件
+
 func generateConfig() {
 	fmt.Println("未找到配置文件，正在为您生成配置文件中！")
 	sb := strings.Builder{}
 	sb.WriteString(defaultConfig)
+
+	// 生成服务选项列表（这里不再需要用户输入）
 	hint := "请选择你需要的通信方式:"
 	for i, s := range serverconfs {
 		hint += fmt.Sprintf("\n> %d: %s", i, s.Brief)
 	}
 	hint += `
-请输入你需要的编号(0-9)，可输入多个，同一编号也可输入多个(如: 233)
-您的选择是:`
-	fmt.Print(hint)
-	input := bufio.NewReader(os.Stdin)
-	readString, err := input.ReadString('\n')
-	if err != nil {
-		log.Fatal("输入不合法: ", err)
-	}
+已选择默认配置: 02`
+
+	// 直接设置为默认选择 "02"
+	readString := "02\n"
+
+	// 配置的最大编号限制为 10
 	rmax := len(serverconfs)
 	if rmax > 10 {
 		rmax = 10
 	}
+
+	// 遍历用户的输入并处理选择
 	for _, r := range readString {
 		r -= '0'
 		if r >= 0 && r < rune(rmax) {
 			sb.WriteString(serverconfs[r].Default)
 		}
 	}
+
+	// 写入配置文件
 	_ = os.WriteFile("config.yml", []byte(sb.String()), 0o644)
 	fmt.Println("默认配置文件已生成，请修改 config.yml 后重新启动!")
-	_, _ = input.ReadString('\n')
 }
+
 
 // expand 使用正则进行环境变量展开
 // os.ExpandEnv 字符 $ 无法逃逸
