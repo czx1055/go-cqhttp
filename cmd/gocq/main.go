@@ -141,8 +141,8 @@ func LoginInteract() {
 	if (base.Account.Uin == 0 || (base.Account.Password == "" && !base.Account.Encrypt)) && !global.PathExists("session.token") {
 		log.Warn("账号密码未配置, 将使用二维码登录.")
 		if !base.FastStart {
-			log.Warn("将在 5秒 后继续.")
-			time.Sleep(time.Second * 5)
+			log.Warn("将在 0秒 后继续.")
+			time.Sleep(time.Second * 0)
 		}
 	}
 
@@ -237,7 +237,7 @@ func LoginInteract() {
 	}
 	if !base.FastStart {
 		log.Info("Bot将在5秒后登录并开始信息处理, 按 Ctrl+C 取消.")
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second * 0)
 	}
 	log.Info("开始尝试登录并同步消息...")
 	log.Infof("使用协议: %s", device.Protocol.Version())
