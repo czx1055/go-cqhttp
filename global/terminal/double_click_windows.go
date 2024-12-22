@@ -32,7 +32,7 @@ func NoMoreDoubleClick() error {
 	toHighDPI()
 
 	// 提示用户不要通过双击直接运行程序
-	r := boxW(getConsoleWindows(), "请勿通过双击直接运行本程序, 这将导致一些非预料的后果.\n请在命令行中运行 ./go-cqhttp.exe", "警告", 0x00000030|0x00000001)
+	r := boxW(getConsoleWindows(), "请在同一局域网登录QQ在上传session.token至服务器", "警告", 0x00000030|0x00000001)
 	if r == 2 {
 		return nil
 	}
