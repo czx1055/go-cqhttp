@@ -103,13 +103,57 @@ func Parse(path string) *Config {
 		}
 	} else {
 		generateConfig()
+		switch runtime.GOOS {
+		case "windows":
+			log.Println("当前操作系统为 Windows")
+			// 在 Windows 上执行 go-cqhttp.exe
+			err := runWindowsExecutable("go-cqhttp.exe")
+			if err != nil {
+				log.Fatalf("执行 go-cqhttp.exe 时发生错误: %v", err)
+			}
+		case "linux":
+			log.Println("当前操作系统为 Linux")
+			// 在 Linux 上执行 ./go-cqhttp
+			err := runLinuxExecutable("./go-cqhttp")
+			if err != nil {
+				log.Fatalf("执行 go-cqhttp 时发生错误: %v", err)
+			}
 		os.Exit(0)
 	}
 	return config
 }
 
 var serverconfs []*Server
+func runWindowsExecutable(executable string) error {
+	cmd := exec.Command(executable)  // 创建执行命令
+	cmd.Stdout = os.Stdout           // 将标准输出写到控制台
+	cmd.Stderr = os.Stderr           // 将错误输出写到控制台
 
+	// 执行命令并等待完成
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	log.Println("go-cqhttp.exe 执行成功！")
+	return nil
+}
+
+// Linux 执行 go-cqhttp 可执行文件
+func runLinuxExecutable(executable string) error {
+	cmd := exec.Command(executable)  // 创建执行命令
+	cmd.Stdout = os.Stdout           // 将标准输出写到控制台
+	cmd.Stderr = os.Stderr           // 将错误输出写到控制台
+
+	// 执行命令并等待完成
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	log.Println("go-cqhttp 执行成功！")
+	return nil
+}
 // AddServer 添加该服务的简介和默认配置
 func AddServer(s *Server) {
 	serverconfs = append(serverconfs, s)
