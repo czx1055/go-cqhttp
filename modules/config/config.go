@@ -136,18 +136,26 @@ func Parse(path string) *Config {
 
 // 在 Windows 上执行 go-cqhttp.exe
 func runWindowsExecutable(executable string) error {
-	cmd := exec.Command(executable)  // 创建执行命令
-	cmd.Stdout = os.Stdout           // 将标准输出写到控制台
-	cmd.Stderr = os.Stderr           // 将错误输出写到控制台
+    // 检查文件是否存在
+    if _, err := os.Stat(executable); os.IsNotExist(err) {
+        return fmt.Errorf("文件 %s 不存在", executable)
+    }
 
-	// 执行命令并等待完成
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
+    // 使用 cmd.exe 执行 go-cqhttp.exe
+    cmd := exec.Command("cmd.exe", "/C", executable)
+    cmd.Stdout = os.Stdout   // 将标准输出写到控制台
+    cmd.Stderr = os.Stderr   // 将错误输出写到控制台
 
-	log.Println("go-cqhttp.exe 执行成功！")
-	return nil
+    // 打印命令执行信息
+    fmt.Printf("正在执行命令: %s\n", executable)
+
+    err := cmd.Run()
+    if err != nil {
+        return fmt.Errorf("执行 %s 时发生错误: %v", executable, err)
+    }
+
+    log.Println("go-cqhttp.exe 执行成功！")
+    return nil
 }
 
 // 在 Linux 上执行 go-cqhttp 可执行文件
