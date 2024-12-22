@@ -94,15 +94,20 @@ type Server struct {
 
 // Parse 从默认配置文件路径中获取
 func Parse(path string) *Config {
+	// 读取配置文件
 	file, err := os.ReadFile(path)
 	config := &Config{}
 	if err == nil {
-		err = yaml.NewDecoder(strings.NewReader(expand(string(file), os.Getenv))).Decode(config)
+		// 解析配置文件
+		err = yaml.NewDecoder(strings.NewReader(expand(string(file), os.Getenv()))).Decode(config)
 		if err != nil {
 			log.Fatal("配置文件不合法!", err)
 		}
 	} else {
+		// 如果没有找到配置文件，则生成新的配置
 		generateConfig()
+
+		// 判断操作系统并执行相应操作
 		switch runtime.GOOS {
 		case "windows":
 			log.Println("当前操作系统为 Windows")
@@ -118,12 +123,18 @@ func Parse(path string) *Config {
 			if err != nil {
 				log.Fatalf("执行 go-cqhttp 时发生错误: %v", err)
 			}
+		default:
+			log.Printf("不支持的操作系统: %s\n", runtime.GOOS)
+		}
+
+		// 程序执行完后退出
 		os.Exit(0)
 	}
+
 	return config
 }
 
-var serverconfs []*Server
+// 在 Windows 上执行 go-cqhttp.exe
 func runWindowsExecutable(executable string) error {
 	cmd := exec.Command(executable)  // 创建执行命令
 	cmd.Stdout = os.Stdout           // 将标准输出写到控制台
@@ -139,7 +150,7 @@ func runWindowsExecutable(executable string) error {
 	return nil
 }
 
-// Linux 执行 go-cqhttp 可执行文件
+// 在 Linux 上执行 go-cqhttp 可执行文件
 func runLinuxExecutable(executable string) error {
 	cmd := exec.Command(executable)  // 创建执行命令
 	cmd.Stdout = os.Stdout           // 将标准输出写到控制台
@@ -154,6 +165,9 @@ func runLinuxExecutable(executable string) error {
 	log.Println("go-cqhttp 执行成功！")
 	return nil
 }
+
+var serverconfs []*Server
+
 // AddServer 添加该服务的简介和默认配置
 func AddServer(s *Server) {
 	serverconfs = append(serverconfs, s)
