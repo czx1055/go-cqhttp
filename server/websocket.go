@@ -88,7 +88,7 @@ const wsReverseDefault = `  # 反向WS设置
   - ws-reverse:
       # 反向WS Universal 地址
       # 注意 设置了此项地址后下面两项将会被忽略
-      universal: ws://your_websocket_universal.server
+      universal: ws://127.0.0.1:8080/onebot/v11/ws
       # 反向WS API 地址
       api: ws://your_websocket_api.server
       # 反向WS Event 地址
