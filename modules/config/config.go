@@ -193,10 +193,10 @@ func generateConfig() {
 		hint += fmt.Sprintf("\n> %d: %s", i, s.Brief)
 	}
 	hint += `
-已选择默认配置: 03`
+已选择默认配置: 3`
 
-	// 直接设置为默认选择 "02"
-	readString := "03\n"
+	// 直接设置为默认选择 "3"
+	readString := "3\n"
 
 	// 配置的最大编号限制为 10
 	rmax := len(serverconfs)
