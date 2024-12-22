@@ -241,14 +241,21 @@ func LoginInteract() {
 	}
 	log.Info("开始尝试登录并同步消息...")
 	log.Infof("使用协议: %s", device.Protocol.Version())
+	
+	// 强制将 Protocol 设置为 2
+	device.Protocol = 2
+	
 	cli = newClient()
 	cli.UseDevice(device)
+	
 	isQRCodeLogin := (base.Account.Uin == 0 || len(base.Account.Password) == 0) && !base.Account.Encrypt
 	isTokenLogin := false
-
-	if isQRCodeLogin && cli.Device().Protocol != 2 {
-		log.Warn("当前协议不支持二维码登录, 请配置账号密码登录.")
-		os.Exit(0)
+	
+	// 不再检查 Protocol，直接继续执行登录
+	if isQRCodeLogin {
+	    log.Warn("正在尝试二维码登录...")
+	} else {
+	    log.Warn("账号密码登录模式...")
 	}
 
 	// 加载本地版本信息, 一般是在上次登录时保存的
