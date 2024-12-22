@@ -2,7 +2,7 @@
 package config
 
 import (
-	"bufio"
+	
 	_ "embed" // embed the default config file
 	"fmt"
 	"os"
