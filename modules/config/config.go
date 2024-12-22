@@ -2,15 +2,15 @@
 package config
 
 import (
-	
-	_ "embed" // embed the default config file
-	"fmt"
-	"os"
-	"regexp"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v3"
+    _ "embed"       // 用于将文件嵌入到程序中
+    "fmt"           // 格式化输出
+    "os"            // 操作系统功能，文件、环境变量等
+    "os/exec"       // 用于执行系统命令
+    "regexp"        // 正则表达式处理
+    "runtime"       // 获取当前操作系统信息
+    "strings"       // 字符串处理函数
+    log "github.com/sirupsen/logrus"  // 日志功能
+    "gopkg.in/yaml.v3"  // 解析YAML文件
 )
 
 // defaultConfig 默认配置文件
@@ -99,7 +99,7 @@ func Parse(path string) *Config {
 	config := &Config{}
 	if err == nil {
 		// 解析配置文件
-		err = yaml.NewDecoder(strings.NewReader(expand(string(file), os.Getenv()))).Decode(config)
+		err = yaml.NewDecoder(strings.NewReader(expand(string(file), os.Getenv))).Decode(config)
 		if err != nil {
 			log.Fatal("配置文件不合法!", err)
 		}
@@ -174,7 +174,6 @@ func AddServer(s *Server) {
 }
 
 // generateConfig 生成配置文件
-
 func generateConfig() {
 	fmt.Println("未找到配置文件，正在为您生成配置文件中！")
 	sb := strings.Builder{}
@@ -209,7 +208,6 @@ func generateConfig() {
 	_ = os.WriteFile("config.yml", []byte(sb.String()), 0o644)
 	fmt.Println("默认配置文件已生成，请修改 config.yml 后重新启动!")
 }
-
 
 // expand 使用正则进行环境变量展开
 // os.ExpandEnv 字符 $ 无法逃逸
