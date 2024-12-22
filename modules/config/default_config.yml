@@ -23,7 +23,7 @@ account: # 账号相关
   # 示例:
   # sign-servers: 
   #   - url: 'http://127.0.0.1:8080' # 本地签名服务器
-  #     key: "114514"  # 相应 key
+  #     key: "1145140"  # 相应 key
   #     authorization: "-"   # authorization 内容, 依服务端设置
   #   - url: 'https://signserver.example.com' # 线上签名服务器
   #     key: "114514"  
