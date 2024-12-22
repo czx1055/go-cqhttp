@@ -1,7 +1,9 @@
 package terminal
 
 import (
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"unsafe"
 
@@ -25,34 +27,41 @@ func RunningByDoubleClick() bool {
 	return true
 }
 
-// NoMoreDoubleClick 提示用户不要双击运行，并生成安全启动脚本
+// NoMoreDoubleClick 提示用户不要双击运行，并直接运行 go-cqhttp.exe
 func NoMoreDoubleClick() error {
 	toHighDPI()
-	r := boxW(getConsoleWindows(), "请勿通过双击直接运行本程序, 这将导致一些非预料的后果.\n请在shell中运行./go-cqhttp.exe\n点击确认将释出安全启动脚本，点击取消则关闭程序", "警告", 0x00000030|0x00000001)
-	if r == 2 {
-		return nil
-	}
-	r = boxW(0, "点击确认将覆盖go-cqhttp.bat，点击取消则关闭程序", "警告", 0x00000030|0x00000001)
-	if r == 2 {
-		return nil
-	}
-	f, err := os.OpenFile("go-cqhttp.bat", os.O_CREATE|os.O_RDWR, 0o666)
-	if err != nil {
-		return err
-	}
-	if err != nil {
-		return errors.Errorf("打开go-cqhttp.bat失败: %v", err)
-	}
-	_ = f.Truncate(0)
 
-	ex, _ := os.Executable()
-	exPath := filepath.Base(ex)
-	_, err = f.WriteString("%Created by go-cqhttp. DO NOT EDIT ME!%\nstart cmd /K \"" + exPath + "\"")
-	if err != nil {
-		return errors.Errorf("写入go-cqhttp.bat失败: %v", err)
+	// 提示用户不要通过双击直接运行程序
+	r := boxW(getConsoleWindows(), "请勿通过双击直接运行本程序, 这将导致一些非预料的后果.\n请在命令行中运行 ./go-cqhttp.exe", "警告", 0x00000030|0x00000001)
+	if r == 2 {
+		return nil
 	}
-	f.Close()
-	boxW(0, "安全启动脚本已生成，请双击go-cqhttp.bat启动", "提示", 0x00000040|0x00000000)
+
+	// 获取 go-cqhttp.exe 的路径
+	executable := "go-cqhttp.exe" // 假设 go-cqhttp.exe 与当前工作目录在同一位置
+	dir, err := os.Getwd()
+	if err != nil {
+		return errors.Wrap(err, "获取当前目录失败")
+	}
+	executablePath := filepath.Join(dir, executable)
+
+	// 检查文件是否存在
+	if _, err := os.Stat(executablePath); os.IsNotExist(err) {
+		return errors.Errorf("go-cqhttp.exe 未找到，路径: %s", executablePath)
+	}
+
+	// 执行 go-cqhttp.exe
+	cmd := exec.Command(executablePath) // 使用 exec.Command 直接执行
+	cmd.Stdout = os.Stdout              // 将标准输出写到控制台
+	cmd.Stderr = os.Stderr              // 将错误输出写到控制台
+
+	// 执行命令并等待完成
+	err = cmd.Run()
+	if err != nil {
+		return errors.Wrap(err, "执行 go-cqhttp.exe 时发生错误")
+	}
+
+	log.Println("go-cqhttp.exe 执行成功！")
 	return nil
 }
 
